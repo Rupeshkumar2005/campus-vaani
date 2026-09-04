@@ -1,0 +1,22 @@
+
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #0E1420;
+  --color-surface: #171F2E;
+  --color-surface2: #1D2637;
+  --color-border: #263047;
+  --color-ink: #E7E9EE;
+  --color-muted: #8A93A6;
+  --color-accent: #F2A93B;
+  --color-good: #4FD1AE;
+  --color-bad: #EF6461;
+  --font-sans: "Manrope", sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
