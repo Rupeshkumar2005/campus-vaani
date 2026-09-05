@@ -15,34 +15,53 @@ function App() {
   const [selectedLevel, setSelectedLevel] = useState(null);
   const [resultsData, setResultsData] = useState(null);
 
+  // Set up the initial history entry, and listen for back/forward
+  // navigation (button, keyboard, or touchpad gesture) so it moves
+  // between our screens instead of leaving the site entirely.
   useEffect(() => {
-    const savedUser = localStorage.getItem("user");
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
+    window.history.replaceState({ screen: "home" }, "");
+
+    function handlePopState(e) {
+      setScreen(e.state?.screen || "home");
     }
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
-  function goHome() {
-    setScreen("home");
+  // Use this for any "forward" navigation — it updates the screen AND
+  // records a browser history entry, so the back gesture has something
+  // to go back to.
+  function navigate(nextScreen) {
+    setScreen(nextScreen);
+    window.history.pushState({ screen: nextScreen }, "");
+  }
+
+  // Use this for any "back" action (our own Back buttons) — it lets the
+  // browser's real history take us back, which then triggers popstate
+  // above and updates the screen. Keeps gesture-back and button-back
+  // consistent with each other.
+  function goBack() {
+    window.history.back();
   }
 
   function handleAuthSuccess(userData) {
     setUser(userData);
-    setScreen("home");
+    navigate("home");
   }
 
   function handleLogout() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
-    setScreen("home");
+    navigate("home");
   }
 
   if (screen === "signup") {
     return (
       <Signup
         onSuccess={handleAuthSuccess}
-        onGoToLogin={() => setScreen("login")}
+        onGoToLogin={() => navigate("login")}
       />
     );
   }
@@ -51,7 +70,7 @@ function App() {
     return (
       <Login
         onSuccess={handleAuthSuccess}
-        onGoToSignup={() => setScreen("signup")}
+        onGoToSignup={() => navigate("signup")}
       />
     );
   }
@@ -64,9 +83,9 @@ function App() {
         onSelect={(level, questions) => {
           setSelectedLevel(level);
           setFetchedQuestions(questions);
-          setScreen("listening-test");
+          navigate("listening-test");
         }}
-        onBack={goHome}
+        onBack={goBack}
       />
     );
   }
@@ -85,9 +104,9 @@ function App() {
             level: selectedLevel,
             results: r,
           });
-          setScreen("results");
+          navigate("results");
         }}
-        onBack={() => setScreen("listening-level")}
+        onBack={goBack}
       />
     );
   }
@@ -104,9 +123,9 @@ function App() {
             level: null,
             results: r,
           });
-          setScreen("results");
+          navigate("results");
         }}
-        onBack={goHome}
+        onBack={goBack}
       />
     );
   }
@@ -120,7 +139,7 @@ function App() {
         moduleType={resultsData.moduleType}
         level={resultsData.level}
         onRetry={() =>
-          setScreen(
+          navigate(
             resultsData.moduleKey === "listening-level" ? "listening-level" : resultsData.moduleKey
           )
         }
@@ -132,17 +151,17 @@ function App() {
     <Home
       user={user}
       onLogout={handleLogout}
-      onGoToLogin={() => setScreen("login")}
-      onGoToSignup={() => setScreen("signup")}
+      onGoToLogin={() => navigate("login")}
+      onGoToSignup={() => navigate("signup")}
       onStart={(module) => {
         if (!user) {
-          setScreen("login");
+          navigate("login");
           return;
         }
         if (module === "listening") {
-          setScreen("listening-level");
+          navigate("listening-level");
         } else {
-          setScreen(module);
+          navigate(module);
         }
       }}
     />
