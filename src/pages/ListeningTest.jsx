@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import listeningQuestions from "../data/listeningQuestions";
 import { LEVEL_CONFIG, LEVEL_STYLES } from "../data/levelConfig";
 import { speak, stopSpeaking, isSpeechSupported } from "../utils/tts";
 import Waveform from "../components/Waveform";
@@ -10,7 +9,7 @@ const ANSWER_SECONDS = 30;
 const MAX_REPLAYS = 2;
 const OPTION_LETTERS = ["A", "B", "C", "D"];
 
-export default function ListeningTest({ level, onFinish, onBack }) {
+export default function ListeningTest({ level, questions, onFinish, onBack }) {
   const [index, setIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [hasPlayedOnce, setHasPlayedOnce] = useState(false);
@@ -21,7 +20,7 @@ export default function ListeningTest({ level, onFinish, onBack }) {
   const [results, setResults] = useState([]);
   const timerRef = useRef(null);
 
-  const filteredQuestions = listeningQuestions.filter((item) => item.level === level);
+  const filteredQuestions = questions.filter((item) => item.level === level);
   const q = filteredQuestions[index];
   const total = filteredQuestions.length;
 
