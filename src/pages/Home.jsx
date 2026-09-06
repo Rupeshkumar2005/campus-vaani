@@ -40,7 +40,7 @@ const MODULE_LABELS = {
   speaking: "Speaking",
 };
 
-export default function Home({ user, onLogout, onGoToLogin, onGoToSignup, onStart }) {
+export default function Home({ user, onLogout, onGoToLogin, onGoToSignup, onStart, onGoToPrivacy, onGoToAbout }) {
   const [attempts, setAttempts] = useState([]);
   const [loadingAttempts, setLoadingAttempts] = useState(false);
 
@@ -148,6 +148,14 @@ export default function Home({ user, onLogout, onGoToLogin, onGoToSignup, onStar
           </div>
         )}
       </div>
+      <footer className="mt-20 pt-8 border-t border-border flex gap-6 text-muted text-xs">
+  <button onClick={onGoToAbout} className="hover:text-ink transition-colors">
+    About
+  </button>
+  <button onClick={onGoToPrivacy} className="hover:text-ink transition-colors">
+    Privacy Policy
+  </button>
+</footer>
     </div>
   );
 }

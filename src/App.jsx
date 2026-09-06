@@ -7,6 +7,8 @@ import ListeningTest from "./pages/ListeningTest";
 import ReadingTest from "./pages/ReadingTest";
 import Results from "./pages/Results";
 import readingQuestions from "./data/readingQuestions";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import About from "./pages/About";
 
 function App() {
   const [screen, setScreen] = useState("home");
@@ -74,6 +76,29 @@ function App() {
       />
     );
   }
+  if (screen === "privacy") {
+  return (
+    <PrivacyPolicy
+      user={user}
+      onLogout={handleLogout}
+      onGoToLogin={() => navigate("login")}
+      onGoToSignup={() => navigate("signup")}
+      onBack={goBack}
+    />
+  );
+}
+
+if (screen === "about") {
+  return (
+    <About
+      user={user}
+      onLogout={handleLogout}
+      onGoToLogin={() => navigate("login")}
+      onGoToSignup={() => navigate("signup")}
+      onBack={goBack}
+    />
+  );
+}
 
   if (screen === "listening-level") {
     return (
@@ -153,6 +178,8 @@ function App() {
       onLogout={handleLogout}
       onGoToLogin={() => navigate("login")}
       onGoToSignup={() => navigate("signup")}
+       onGoToPrivacy={() => navigate("privacy")}
+  onGoToAbout={() => navigate("about")}
       onStart={(module) => {
         if (!user) {
           navigate("login");
