@@ -11,8 +11,6 @@ export default function Results({ results, questions, moduleLabel, moduleType, l
   const skippedCount = totalQuestions - attemptedCount;
   const score = results.filter((r) => r.correct).length;
 
-  // % is calculated on questions actually attempted, not on the full set —
-  // unattempted questions shouldn't drag the accuracy % down, they're just "not done"
   const pct = attemptedCount > 0 ? Math.round((score / attemptedCount) * 100) : 0;
 
   // Build a lookup so we can match each question to its result (if any) by id
@@ -36,7 +34,6 @@ export default function Results({ results, questions, moduleLabel, moduleType, l
           <ScoreRing score={score} total={attemptedCount || totalQuestions} />
         </div>
 
-        {/* attempted / correct / skipped summary strip */}
         <div className="flex justify-center gap-6 mb-6 text-center">
           <div>
             <p className="text-lg font-semibold">{attemptedCount}/{totalQuestions}</p>
@@ -65,15 +62,15 @@ export default function Results({ results, questions, moduleLabel, moduleType, l
         </p>
 
         <div className="flex flex-col gap-3 mb-10">
-          {/* Loop over ALL questions in the module, not just attempted ones */}
           {questions.map((question, i) => {
-            const r = resultById[question.id];
+            const qid = question._id ?? question.id;
+            const r = resultById[qid];
             const attempted = Boolean(r);
             const correct = attempted && r.correct;
 
             return (
               <div
-                key={question.id}
+                key={qid}
                 className={`border rounded-xl px-5 py-4 ${
                   attempted ? "border-border bg-surface" : "border-dashed border-border bg-surface/50"
                 }`}

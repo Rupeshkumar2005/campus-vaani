@@ -78,7 +78,7 @@ export default function ListeningTest({ level, questions, onFinish, onBack }) {
       isCorrect = given.toLowerCase() === q.answer.toLowerCase();
     }
 
-    const updated = [...results, { id: q.id, correct: isCorrect, given }];
+        const updated = [...results, { id: q._id ?? q.id, correct: isCorrect, given }];
     setResults(updated);
 
     if (index + 1 < total) {
