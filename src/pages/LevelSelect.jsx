@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { LEVEL_CONFIG, LEVEL_STYLES } from "../data/levelConfig";
+import grammarQuestions from "../data/grammarQuestions";
 import { getQuestions } from "../utils/api";
 import BackButton from "../components/BackButton";
 
@@ -9,11 +10,16 @@ export default function LevelSelect({ moduleType, moduleLabel, onSelect, onBack 
   const [error, setError] = useState("");
 
   useEffect(() => {
-    getQuestions(moduleType)
-      .then(setQuestions)
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
-  }, [moduleType]);
+  if (moduleType === "grammar") {
+    setQuestions(grammarQuestions);
+    setLoading(false);
+    return;
+  }
+  getQuestions(moduleType)
+    .then(setQuestions)
+    .catch((err) => setError(err.message))
+    .finally(() => setLoading(false));
+}, [moduleType]);
 
   const levels = ["beginner", "medium", "hard"];
 

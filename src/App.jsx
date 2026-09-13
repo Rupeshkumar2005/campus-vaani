@@ -5,10 +5,11 @@ import Login from "./pages/Login";
 import LevelSelect from "./pages/LevelSelect";
 import ListeningTest from "./pages/ListeningTest";
 import ReadingTest from "./pages/ReadingTest";
+import GrammarTest from "./pages/GrammarTest";
 import Results from "./pages/Results";
-import readingQuestions from "./data/readingQuestions";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import About from "./pages/About";
+import readingQuestions from "./data/readingQuestions";
 
 function App() {
   const [screen, setScreen] = useState("home");
@@ -17,9 +18,13 @@ function App() {
   const [selectedLevel, setSelectedLevel] = useState(null);
   const [resultsData, setResultsData] = useState(null);
 
-  // Set up the initial history entry, and listen for back/forward
-  // navigation (button, keyboard, or touchpad gesture) so it moves
-  // between our screens instead of leaving the site entirely.
+  useEffect(() => {
+    const savedUser = localStorage.getItem("user");
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+  }, []);
+
   useEffect(() => {
     window.history.replaceState({ screen: "home" }, "");
 
@@ -31,18 +36,11 @@ function App() {
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
-  // Use this for any "forward" navigation — it updates the screen AND
-  // records a browser history entry, so the back gesture has something
-  // to go back to.
   function navigate(nextScreen) {
     setScreen(nextScreen);
     window.history.pushState({ screen: nextScreen }, "");
   }
 
-  // Use this for any "back" action (our own Back buttons) — it lets the
-  // browser's real history take us back, which then triggers popstate
-  // above and updates the screen. Keeps gesture-back and button-back
-  // consistent with each other.
   function goBack() {
     window.history.back();
   }
@@ -76,35 +74,36 @@ function App() {
       />
     );
   }
-  if (screen === "privacy") {
-  return (
-    <PrivacyPolicy
-      user={user}
-      onLogout={handleLogout}
-      onGoToLogin={() => navigate("login")}
-      onGoToSignup={() => navigate("signup")}
-      onBack={goBack}
-    />
-  );
-}
 
-if (screen === "about") {
-  return (
-    <About
-      user={user}
-      onLogout={handleLogout}
-      onGoToLogin={() => navigate("login")}
-      onGoToSignup={() => navigate("signup")}
-      onBack={goBack}
-    />
-  );
-}
+  if (screen === "privacy") {
+    return (
+      <PrivacyPolicy
+        user={user}
+        onLogout={handleLogout}
+        onGoToLogin={() => navigate("login")}
+        onGoToSignup={() => navigate("signup")}
+        onBack={goBack}
+      />
+    );
+  }
+
+  if (screen === "about") {
+    return (
+      <About
+        user={user}
+        onLogout={handleLogout}
+        onGoToLogin={() => navigate("login")}
+        onGoToSignup={() => navigate("signup")}
+        onBack={goBack}
+      />
+    );
+  }
 
   if (screen === "listening-level") {
     return (
       <LevelSelect
         moduleType="listening"
-        moduleLabel="Listening Comprehension"
+        moduleLabel="Workplace Listening Comprehension"
         onSelect={(level, questions) => {
           setSelectedLevel(level);
           setFetchedQuestions(questions);
@@ -123,8 +122,43 @@ if (screen === "about") {
         onFinish={(r) => {
           setResultsData({
             moduleKey: "listening-level",
-            moduleLabel: "Listening Comprehension",
+            moduleLabel: "Workplace Listening Comprehension",
             moduleType: "listening",
+            questions: fetchedQuestions.filter((q) => q.level === selectedLevel),
+            level: selectedLevel,
+            results: r,
+          });
+          navigate("results");
+        }}
+        onBack={goBack}
+      />
+    );
+  }
+
+  if (screen === "grammar-level") {
+    return (
+      <LevelSelect
+        moduleType="grammar"
+        moduleLabel="Grammar & Sentence Correction"
+        onSelect={(level, questions) => {
+          setSelectedLevel(level);
+          setFetchedQuestions(questions);
+          navigate("grammar-test");
+        }}
+        onBack={goBack}
+      />
+    );
+  }
+
+  if (screen === "grammar-test") {
+    return (
+      <GrammarTest
+        level={selectedLevel}
+        onFinish={(r) => {
+          setResultsData({
+            moduleKey: "grammar-level",
+            moduleLabel: "Grammar & Sentence Correction",
+            moduleType: "grammar",
             questions: fetchedQuestions.filter((q) => q.level === selectedLevel),
             level: selectedLevel,
             results: r,
@@ -142,7 +176,7 @@ if (screen === "about") {
         onFinish={(r) => {
           setResultsData({
             moduleKey: "reading",
-            moduleLabel: "Reading Comprehension",
+            moduleLabel: "Workplace Reading Comprehension",
             moduleType: "reading",
             questions: readingQuestions,
             level: null,
@@ -163,11 +197,7 @@ if (screen === "about") {
         moduleLabel={resultsData.moduleLabel}
         moduleType={resultsData.moduleType}
         level={resultsData.level}
-        onRetry={() =>
-          navigate(
-            resultsData.moduleKey === "listening-level" ? "listening-level" : resultsData.moduleKey
-          )
-        }
+        onRetry={() => navigate(resultsData.moduleKey)}
       />
     );
   }
@@ -178,8 +208,8 @@ if (screen === "about") {
       onLogout={handleLogout}
       onGoToLogin={() => navigate("login")}
       onGoToSignup={() => navigate("signup")}
-       onGoToPrivacy={() => navigate("privacy")}
-  onGoToAbout={() => navigate("about")}
+      onGoToPrivacy={() => navigate("privacy")}
+      onGoToAbout={() => navigate("about")}
       onStart={(module) => {
         if (!user) {
           navigate("login");
@@ -187,6 +217,8 @@ if (screen === "about") {
         }
         if (module === "listening") {
           navigate("listening-level");
+        } else if (module === "grammar") {
+          navigate("grammar-level");
         } else {
           navigate(module);
         }
