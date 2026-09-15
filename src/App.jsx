@@ -84,28 +84,29 @@ function App() {
   }
 
   if (screen === "privacy") {
-    return (
-      <PrivacyPolicy
-        user={user}
-        onLogout={handleLogout}
-        onGoToLogin={() => navigate("login")}
-        onGoToSignup={() => navigate("signup")}
-        onBack={goBack}
-      />
-    );
-  }
-
+  return (
+    <PrivacyPolicy
+      user={user}
+      onLogout={handleLogout}
+      onGoToLogin={() => navigate("login")}
+      onGoToSignup={() => navigate("signup")}
+      onGoHome={() => navigate("home")}
+      onBack={goBack}
+    />
+  );
+}
   if (screen === "about") {
-    return (
-      <About
-        user={user}
-        onLogout={handleLogout}
-        onGoToLogin={() => navigate("login")}
-        onGoToSignup={() => navigate("signup")}
-        onBack={goBack}
-      />
-    );
-  }
+  return (
+    <About
+      user={user}
+      onLogout={handleLogout}
+      onGoToLogin={() => navigate("login")}
+      onGoToSignup={() => navigate("signup")}
+      onGoHome={() => navigate("home")}
+      onBack={goBack}
+    />
+  );
+}
 
   if (screen === "listening-level") {
     return (
@@ -323,14 +324,15 @@ function App() {
   }
 
   return (
-    <Home
-      user={user}
-      onLogout={handleLogout}
-      onGoToLogin={() => navigate("login")}
-      onGoToSignup={() => navigate("signup")}
-      onGoToPrivacy={() => navigate("privacy")}
-      onGoToAbout={() => navigate("about")}
-      onStart={(module) => {
+  <Home
+    user={user}
+    onLogout={handleLogout}
+    onGoToLogin={() => navigate("login")}
+    onGoToSignup={() => navigate("signup")}
+    onGoToPrivacy={() => navigate("privacy")}
+    onGoToAbout={() => navigate("about")}
+    onGoHome={() => navigate("home")}
+    onStart={(module) => {
         if (!user) {
           navigate("login");
           return;

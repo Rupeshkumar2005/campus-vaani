@@ -45,12 +45,12 @@ const CATEGORIES = [
   },
 ];
 
-export default function Home({ user, onLogout, onGoToLogin, onGoToSignup, onGoToPrivacy, onGoToAbout, onStart }) {
+export default function Home({ user, onLogout, onGoToLogin, onGoToSignup, onGoToPrivacy, onGoToAbout, onGoHome, onStart }) {
   const attempts = getAttempts();
 
   return (
     <div className="min-h-screen bg-bg">
-      <Navbar user={user} onLogout={onLogout} onGoToLogin={onGoToLogin} onGoToSignup={onGoToSignup} />
+      <Navbar user={user} onLogout={onLogout} onGoToLogin={onGoToLogin} onGoToSignup={onGoToSignup} onGoHome={onGoHome} />
 
       <div className="max-w-5xl mx-auto px-6 py-20 relative">
         <div className="hidden md:flex items-end gap-1 absolute top-16 right-6 opacity-20">

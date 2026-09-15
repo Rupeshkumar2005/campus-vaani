@@ -1,15 +1,15 @@
 import LogoMark from "./LogoMark";
 
-export default function Navbar({ user, onLogout, onGoToLogin, onGoToSignup }) {
+export default function Navbar({ user, onLogout, onGoToLogin, onGoToSignup, onGoHome }) {
   return (
     <nav className="border-b border-border">
       <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <LogoMark />
-          <p className="font-extrabold text-lg tracking-tight">
-            Campus<span className="text-accent">Vaani</span>
-          </p>
-        </div>
+        <button onClick={onGoHome} className="flex items-center gap-2.5">
+  <LogoMark />
+  <p className="font-extrabold text-lg tracking-tight">
+    Campus<span className="text-accent">Vaani</span>
+  </p>
+</button>
 
         {user ? (
           <div className="flex items-center gap-4">

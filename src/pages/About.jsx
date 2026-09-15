@@ -1,10 +1,10 @@
 import Navbar from "../components/Navbar";
 import BackButton from "../components/BackButton";
 
-export default function About({ user, onLogout, onGoToLogin, onGoToSignup, onBack }) {
+export default function About({ user, onLogout, onGoToLogin, onGoToSignup, onGoHome, onBack }) {
   return (
     <div className="min-h-screen bg-bg">
-      <Navbar user={user} onLogout={onLogout} onGoToLogin={onGoToLogin} onGoToSignup={onGoToSignup} />
+      <Navbar user={user} onLogout={onLogout} onGoToLogin={onGoToLogin} onGoToSignup={onGoToSignup} onGoHome={onGoHome} />
       <div className="max-w-2xl mx-auto px-6 py-14">
         <BackButton label="Back to home" onClick={onBack} />
 
