@@ -3,6 +3,7 @@ import readingQuestions from "../data/readingQuestions";
 import { LEVEL_CONFIG, LEVEL_STYLES } from "../data/levelConfig";
 import TimerRing from "../components/TimerRing";
 import BackButton from "../components/BackButton";
+import ConfirmModal from "../components/ConfirmModal";
 
 const READ_SECONDS = 40;
 const OPTION_LETTERS = ["A", "B", "C", "D"];
@@ -10,6 +11,7 @@ const OPTION_LETTERS = ["A", "B", "C", "D"];
 export default function ReadingTest({ onFinish, onBack }) {
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState(null);
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [typed, setTyped] = useState("");
   const [timeLeft, setTimeLeft] = useState(READ_SECONDS);
   const [results, setResults] = useState([]);
@@ -67,13 +69,8 @@ export default function ReadingTest({ onFinish, onBack }) {
       <div className="max-w-xl w-full">
         <BackButton
   label="Back to home"
-  onClick={() => {
-    if (window.confirm("Exit this test? Your progress will be lost.")) {
-      onBack();
-    }
-  }}
+  onClick={() => setShowExitConfirm(true)}
 />
-
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-3">
             <span className="text-muted text-xs font-mono">
@@ -145,6 +142,15 @@ export default function ReadingTest({ onFinish, onBack }) {
           {index + 1 === total ? "Finish test" : "Next question"}
         </button>
       </div>
+      {showExitConfirm && (
+  <ConfirmModal
+    title="Exit this test?"
+    message="Your progress will be lost."
+    confirmLabel="Exit"
+    onConfirm={onBack}
+    onCancel={() => setShowExitConfirm(false)}
+  />
+)}
     </div>
   );
 }

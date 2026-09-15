@@ -3,6 +3,7 @@ import { LEVEL_CONFIG, LEVEL_STYLES } from "../data/levelConfig";
 import grammarQuestions from "../data/grammarQuestions";
 import { getQuestions } from "../utils/api";
 import BackButton from "../components/BackButton";
+import speakingQuestions from "../data/speakingQuestions";
 
 export default function LevelSelect({ moduleType, moduleLabel, onSelect, onBack }) {
   const [questions, setQuestions] = useState([]);
@@ -15,12 +16,16 @@ export default function LevelSelect({ moduleType, moduleLabel, onSelect, onBack 
     setLoading(false);
     return;
   }
+  if (moduleType === "speaking") {
+    setQuestions(speakingQuestions);
+    setLoading(false);
+    return;
+  }
   getQuestions(moduleType)
     .then(setQuestions)
     .catch((err) => setError(err.message))
     .finally(() => setLoading(false));
 }, [moduleType]);
-
   const levels = ["beginner", "medium", "hard"];
 
   function countFor(level) {

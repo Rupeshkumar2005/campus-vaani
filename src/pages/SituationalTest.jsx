@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import grammarQuestions from "../data/grammarQuestions";
-import { LEVEL_CONFIG, LEVEL_STYLES } from "../data/levelConfig";
+import situationalQuestions from "../data/situationalQuestions";
 import TimerRing from "../components/TimerRing";
 import BackButton from "../components/BackButton";
 import ConfirmModal from "../components/ConfirmModal";
 
-const ANSWER_SECONDS = 25;
+const ANSWER_SECONDS = 30;
 const OPTION_LETTERS = ["A", "B", "C", "D"];
 
-export default function GrammarTest({ level, onFinish, onBack }) {
+export default function SituationalTest({ onFinish, onBack }) {
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState(null);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
@@ -17,9 +16,8 @@ const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
   const [results, setResults] = useState([]);
   const timerRef = useRef(null);
 
-  const filteredQuestions = grammarQuestions.filter((item) => item.level === level);
-  const q = filteredQuestions[index];
-  const total = filteredQuestions.length;
+  const q = situationalQuestions[index];
+  const total = situationalQuestions.length;
 
   useEffect(() => {
     setSelected(null);
@@ -43,7 +41,7 @@ const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
 
   function handleNext() {
     clearInterval(timerRef.current);
-    const isCorrect = selected === q.correctIndex;
+    const isCorrect = selected === q.answerIndex;
     const given = selected === null ? "" : q.options[selected];
 
     const updated = [...results, { id: q.id, correct: isCorrect, given }];
@@ -69,8 +67,8 @@ const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
   return (
     <div className="min-h-screen bg-bg flex flex-col items-center px-6 py-14">
       <div className="max-w-xl w-full">
-       <BackButton
-  label="Back to levels"
+        <BackButton
+  label="Back to categories"
   onClick={() => setShowExitConfirm(true)}
 />
 
@@ -84,14 +82,9 @@ const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
         </div>
 
         <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-3">
-            <span className="text-muted text-xs font-mono">
-              {String(index + 1).padStart(2, "0")}/{String(total).padStart(2, "0")}
-            </span>
-            <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${LEVEL_STYLES[q.level]}`}>
-              {LEVEL_CONFIG[q.level]?.label}
-            </span>
-          </div>
+          <span className="text-muted text-xs font-mono">
+            {String(index + 1).padStart(2, "0")}/{String(total).padStart(2, "0")}
+          </span>
           <TimerRing seconds={timeLeft} total={ANSWER_SECONDS} />
         </div>
 
@@ -103,17 +96,8 @@ const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
         </div>
 
         <div className="bg-surface border border-border rounded-xl p-6 mb-8">
-  <p className="text-muted text-xs font-semibold mb-3 uppercase tracking-wide">
-    Choose the correct word(s) for the blank
-  </p>
-  <p className="text-base leading-relaxed">
-    {q.sentence.split(q.errorPart)[0]}
-    <span className="inline-block border-b-2 border-accent min-w-[80px] px-1">
-      &nbsp;
-    </span>
-    {q.sentence.split(q.errorPart)[1]}
-  </p>
-</div>
+          <p className="text-sm leading-relaxed">{q.passage}</p>
+        </div>
 
         <div className="flex flex-col gap-2">
           {q.options.map((opt, i) => (

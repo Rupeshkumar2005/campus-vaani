@@ -6,16 +6,24 @@ import LevelSelect from "./pages/LevelSelect";
 import ListeningTest from "./pages/ListeningTest";
 import ReadingTest from "./pages/ReadingTest";
 import GrammarTest from "./pages/GrammarTest";
+import WritingTypeSelect from "./pages/WritingTypeSelect";
+import WritingTest from "./pages/WritingTest";
+import WritingReview from "./pages/WritingReview";
+import SituationalTest from "./pages/SituationalTest";
+import SpeakingTest from "./pages/SpeakingTest";
 import Results from "./pages/Results";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import About from "./pages/About";
 import readingQuestions from "./data/readingQuestions";
+import situationalQuestions from "./data/situationalQuestions";
 
 function App() {
   const [screen, setScreen] = useState("home");
   const [user, setUser] = useState(null);
   const [fetchedQuestions, setFetchedQuestions] = useState([]);
   const [selectedLevel, setSelectedLevel] = useState(null);
+  const [selectedWritingType, setSelectedWritingType] = useState(null);
+  const [selectedWritingLength, setSelectedWritingLength] = useState(null);
   const [resultsData, setResultsData] = useState(null);
 
   useEffect(() => {
@@ -170,6 +178,118 @@ function App() {
     );
   }
 
+  if (screen === "speaking-level") {
+    return (
+      <LevelSelect
+        moduleType="speaking"
+        moduleLabel="Spoken Communication Simulation"
+        onSelect={(level, questions) => {
+          setSelectedLevel(level);
+          setFetchedQuestions(questions);
+          navigate("speaking-test");
+        }}
+        onBack={goBack}
+      />
+    );
+  }
+
+  if (screen === "speaking-test") {
+    return (
+      <SpeakingTest
+        level={selectedLevel}
+        onFinish={(r) => {
+          setResultsData({ speakingResults: r });
+          navigate("speaking-review");
+        }}
+        onBack={() => navigate("speaking-level")}
+      />
+    );
+  }
+
+  if (screen === "speaking-review") {
+    const avgAccuracy = Math.round(
+      resultsData.speakingResults.reduce((sum, r) => sum + r.accuracy, 0) /
+        resultsData.speakingResults.length
+    );
+    return (
+      <div className="min-h-screen bg-bg flex flex-col items-center px-6 py-14">
+        <div className="max-w-xl w-full">
+          <p className="text-muted text-sm mb-2 text-center">
+            Spoken Communication Simulation · Result
+          </p>
+          <h1 className="text-5xl font-extrabold mb-10 text-center">
+            {avgAccuracy}% avg accuracy
+          </h1>
+          <button
+            onClick={() => navigate("home")}
+            className="w-full py-3 rounded-full bg-accent text-bg font-semibold text-sm"
+          >
+            Back to home
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (screen === "writing-type") {
+    return (
+      <WritingTypeSelect
+        onSelect={(type, length) => {
+          if (type === "situational") {
+            navigate("situational-test");
+          } else {
+            setSelectedWritingType(type);
+            setSelectedWritingLength(length);
+            navigate("writing");
+          }
+        }}
+        onBack={goBack}
+      />
+    );
+  }
+
+  if (screen === "situational-test") {
+    return (
+      <SituationalTest
+        onFinish={(r) => {
+          setResultsData({
+            moduleKey: "writing-type",
+            moduleLabel: "Situational Response (Chat/Email)",
+            moduleType: "situational",
+            questions: situationalQuestions,
+            level: null,
+            results: r,
+          });
+          navigate("results");
+        }}
+        onBack={() => navigate("writing-type")}
+      />
+    );
+  }
+
+  if (screen === "writing") {
+    return (
+      <WritingTest
+        writingType={selectedWritingType}
+        lengthCategory={selectedWritingLength}
+        onFinish={(responses) => {
+          setResultsData({ responses });
+          navigate("writing-review");
+        }}
+        onBack={() => navigate("writing-type")}
+      />
+    );
+  }
+
+  if (screen === "writing-review") {
+    return (
+      <WritingReview
+        responses={resultsData.responses}
+        onBack={() => navigate("home")}
+      />
+    );
+  }
+
   if (screen === "reading") {
     return (
       <ReadingTest
@@ -219,6 +339,10 @@ function App() {
           navigate("listening-level");
         } else if (module === "grammar") {
           navigate("grammar-level");
+        } else if (module === "writing") {
+          navigate("writing-type");
+        } else if (module === "speaking") {
+          navigate("speaking-level");
         } else {
           navigate(module);
         }

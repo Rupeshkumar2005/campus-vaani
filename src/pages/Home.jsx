@@ -32,7 +32,7 @@ const CATEGORIES = [
     label: "Business Writing & Situational Response",
     Icon: PenIcon,
     types: ["Business Communication Writing", "Chat/Email Response"],
-    active: false,
+    active: true,
     key: "writing",
   },
   {
@@ -40,7 +40,7 @@ const CATEGORIES = [
     label: "Spoken Communication Simulation",
     Icon: MicIcon,
     types: ["Read Aloud", "Situational Response"],
-    active: false,
+    active: true,
     key: "speaking",
   },
 ];

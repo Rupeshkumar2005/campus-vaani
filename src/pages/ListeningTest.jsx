@@ -4,6 +4,7 @@ import { speak, stopSpeaking, isSpeechSupported } from "../utils/tts";
 import Waveform from "../components/Waveform";
 import TimerRing from "../components/TimerRing";
 import BackButton from "../components/BackButton";
+import ConfirmModal from "../components/ConfirmModal";
 
 const ANSWER_SECONDS = 30;
 const MAX_REPLAYS = 2;
@@ -12,6 +13,8 @@ const OPTION_LETTERS = ["A", "B", "C", "D"];
 export default function ListeningTest({ level, questions, onFinish, onBack }) {
   const [index, setIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
+const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
   const [hasPlayedOnce, setHasPlayedOnce] = useState(false);
   const [replaysUsed, setReplaysUsed] = useState(0);
   const [selected, setSelected] = useState(null);
@@ -111,23 +114,18 @@ export default function ListeningTest({ level, questions, onFinish, onBack }) {
       <div className="max-w-xl w-full">
         {/* Top bar */}
         <BackButton
-          label="Back to levels"
-          onClick={() => {
-            if (window.confirm("Exit this test? Your progress will be lost.")) {
-              stopSpeaking();
-              onBack();
-            }
-          }}
-        />
+  label="Back to levels"
+  onClick={() => setShowExitConfirm(true)}
+/>
 
         {/* Early-submit control */}
         <div className="flex justify-end mb-4">
           <button
-            onClick={handleSubmitEarly}
-            className="text-xs font-semibold px-4 py-2 rounded-full border border-accent text-accent hover:bg-accent hover:text-bg transition-colors"
-          >
-            Submit test now ({results.length}/{total} answered)
-          </button>
+  onClick={() => setShowSubmitConfirm(true)}
+  className="text-xs font-semibold px-4 py-2 rounded-full border border-accent text-accent hover:bg-accent hover:text-bg transition-colors"
+>
+  Submit test now ({results.length}/{total} answered)
+</button>
         </div>
 
         <div className="flex items-center justify-between mb-3">
@@ -233,6 +231,31 @@ export default function ListeningTest({ level, questions, onFinish, onBack }) {
           </div>
         )}
       </div>
+      {showExitConfirm && (
+  <ConfirmModal
+    title="Exit this test?"
+    message="Your progress will be lost."
+    confirmLabel="Exit"
+    onConfirm={() => {
+      stopSpeaking();
+      onBack();
+    }}
+    onCancel={() => setShowExitConfirm(false)}
+  />
+)}
+
+{showSubmitConfirm && (
+  <ConfirmModal
+    title="Submit now?"
+    message={`You've answered ${results.length}/${total} questions. The rest will show as skipped.`}
+    confirmLabel="Submit"
+    onConfirm={() => {
+      stopSpeaking();
+      onFinish(results);
+    }}
+    onCancel={() => setShowSubmitConfirm(false)}
+  />
+)}
     </div>
   );
 }
